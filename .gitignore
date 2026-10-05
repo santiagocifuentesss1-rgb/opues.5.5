@@ -9,3 +9,8 @@ nebula/out/segments-*/
 nebula/out/stills/
 nebula/out/check.png
 nebula/audio/build/
+nacional/node_modules
+nacional/out/segments-*/
+nacional/out/stills/
+nacional/audio/build/
+nacional/plates/raw/
