@@ -5,8 +5,10 @@ import { clamp, lerp, prog, ease, spring, noise1, hash01, mulberry32 } from './l
 
 const W = FILM.width, H = FILM.height, M = 72, MW = W - 2 * M;
 const C = {
-  ink: '#0b0b0c', paper: '#f1eee6', accent: '#ff4a1c', white: '#ffffff',
-  mute: '#7a766c', hair: 'rgba(11,11,12,0.12)', land: '#e7e2d6', road: '#fbfaf6', ink2: '#262628', tint: '#ffc6b4',
+  ink: '#0b0b0c', paper: '#f1eee6', accent: '#3b1d66', lite: '#b394ea', white: '#ffffff',
+  mute: '#7a766c', hair: 'rgba(11,11,12,0.12)', land: '#e7e2d6', road: '#fbfaf6', ink2: '#262628', tint: '#ddd0f5',
+  // dark metallic purple: brushed base + a specular band that travels with time
+  metal: 'linear-gradient(115deg, #24104a 0%, #3b1d66 30%, #6a46a6 46%, #a98ad8 50%, #6a46a6 54%, #3b1d66 70%, #24104a 100%)',
 };
 const stage = document.getElementById('stage');
 let T, b, Q;
@@ -36,6 +38,12 @@ function tf(n, x = 0, y = 0, s = 1, r = 0, sy) {
 }
 const vis = (n, on) => { n.style.visibility = on ? 'inherit' : 'hidden'; };
 const disp = (n, on) => { n.style.display = on ? 'block' : 'none'; };
+function metal(n, t, speed = 0.18) {
+  n.style.backgroundImage = C.metal;
+  n.style.backgroundSize = '320% 320%';
+  const p = ((t * speed) % 1 + 1) % 1;
+  n.style.backgroundPosition = `${(100 - p * 100).toFixed(2)}% ${(100 - p * 100).toFixed(2)}%`;
+}
 const fvs = (wdth, wght) => `'wdth' ${wdth.toFixed(2)}, 'wght' ${wght}`;
 
 // ------------------------------------------------------------------------------------------
@@ -345,6 +353,9 @@ function drawSearch(t) {
   tf(s.hl, L3.x - 14, L3.y - L3.size * 0.8 - out * 1300 - out * 3 * 60, 1, 0);
   s.hl.style.transform += ` scaleX(${hp.toFixed(4)})`;
   vis(s.hl, hp > 0 && out < 1);
+  metal(s.hl, t, 0.3);
+  const hlEdge = L3.x - 14 + hp * (L3.width + 36);
+  L3.chars.forEach((c, i) => { c.style.color = L3.x + L3.pos[i].x + L3.pos[i].w * 0.5 < hlEdge ? C.paper : C.ink; });
 
   // ---- typing
   const nTyped = Q_TYPE.filter((k) => k <= t).length;
@@ -440,7 +451,7 @@ function buildVoid() {
   s.l1 = new Text(cam, 'SIN WEB,', { size: f1.size, wdth: f1.wdth, y: 860, color: C.paper });
   const f2 = fitWdth('NO EXISTES.', f1.size, MW);
   s.l2 = new Text(cam, 'NO EXISTES.', { size: f2.size, wdth: f2.wdth, y: 860 + f1.size * 0.92, color: C.paper });
-  s.cursor = el('div', cam, null, { position: 'absolute', left: '0', top: '0', width: px(f2.size * 0.11), height: px(f2.size * MET.cap * 1.12), background: C.accent });
+  s.cursor = el('div', cam, null, { position: 'absolute', left: '0', top: '0', width: px(f2.size * 0.11), height: px(f2.size * MET.cap * 1.12), background: C.lite });
   s.err = el('div', cam, 'ui', { position: 'absolute', left: px(M), top: '1420px', fontSize: '50px', fontWeight: 500, color: '#b4b0a6' });
   s.err.textContent = 'Error 404 · negocio no encontrado';
   S.void = s;
@@ -474,7 +485,7 @@ function drawVoid(t) {
       const fr = Math.floor(t * 60);
       const jx = (hash01(fr, idx) - 0.5) * 36, sy = 1 - g / 0.07;
       c.style.transform = `translate3d(${jx.toFixed(1)}px,0,0) scale(1,${sy.toFixed(3)})`;
-      c.style.color = hash01(fr, idx + 9) > 0.5 ? C.accent : C.paper;
+      c.style.color = hash01(fr, idx + 9) > 0.5 ? C.lite : C.paper;
     } else c.style.color = C.paper;
   }
   // caret follows the end of the text
@@ -499,21 +510,21 @@ function buildOpen() {
   const cam = el('div', root, 'abs', { width: px(W), height: px(H), transformOrigin: '50% 45%' });
   const s = { root, cam };
   const size = fitSize('24/7', MW, { wdth: 112 });
-  s.big = new Run(cam, '24/7', { size, wdth: 112, y: 1010, color: C.ink, ls: -0.03 });
+  s.big = new Run(cam, '24/7', { size, wdth: 112, y: 1010, color: C.paper, ls: -0.03 });
   s.bigSize = size;
   const fo = fitWdth('ABIERTO', 210, MW);
-  s.open = new Text(cam, 'ABIERTO', { size: fo.size, wdth: fo.wdth, y: 360, color: C.ink });
+  s.open = new Text(cam, 'ABIERTO', { size: fo.size, wdth: fo.wdth, y: 360, color: C.paper });
   // chip with sun/moon + live clock
-  s.chip = el('div', cam, null, { position: 'absolute', left: '0', top: '0', height: '104px', borderRadius: '52px', background: C.ink, width: '420px' });
+  s.chip = el('div', cam, null, { position: 'absolute', left: '0', top: '0', height: '104px', borderRadius: '52px', background: C.paper, width: '420px' });
   const ic = svgBox(s.chip, 64, 64, { left: 26, top: 20 });
   s.rays = sv('g', ic, {});
   for (let i = 0; i < 8; i++) {
     const a = (i * Math.PI) / 4;
-    sv('line', s.rays, { x1: 32 + Math.cos(a) * 21, y1: 32 + Math.sin(a) * 21, x2: 32 + Math.cos(a) * 29, y2: 32 + Math.sin(a) * 29, stroke: C.paper, 'stroke-width': 5, 'stroke-linecap': 'round' });
+    sv('line', s.rays, { x1: 32 + Math.cos(a) * 21, y1: 32 + Math.sin(a) * 21, x2: 32 + Math.cos(a) * 29, y2: 32 + Math.sin(a) * 29, stroke: C.ink, 'stroke-width': 5, 'stroke-linecap': 'round' });
   }
-  sv('circle', ic, { cx: 32, cy: 32, r: 15, fill: C.paper });
-  s.moonCut = sv('circle', ic, { cx: 60, cy: 18, r: 15, fill: C.ink });
-  s.clock = el('div', s.chip, 'ui', { position: 'absolute', left: '108px', top: '25px', fontSize: '56px', fontWeight: 600, color: C.paper, fontVariantNumeric: 'tabular-nums' });
+  sv('circle', ic, { cx: 32, cy: 32, r: 15, fill: C.ink });
+  s.moonCut = sv('circle', ic, { cx: 60, cy: 18, r: 15, fill: C.paper });
+  s.clock = el('div', s.chip, 'ui', { position: 'absolute', left: '108px', top: '25px', fontSize: '56px', fontWeight: 600, color: C.ink, fontVariantNumeric: 'tabular-nums' });
   // notifications
   const items = [['Nuevo pedido', '03:12', 'bag'], ['Nueva reserva', '03:47', 'cal'], ['Nuevo mensaje', '04:05', 'chat']];
   s.notifs = items.map(([title, time, icon]) => {
@@ -538,6 +549,7 @@ function drawOpen(t) {
   disp(s.root, on);
   if (!on) return;
   const t0 = Q.drop;
+  metal(s.root, t - t0);
   // 24/7 slams: width axis snaps from condensed to wide with the spring
   const sp = spring(t - t0, 2.4, 0.42);
   const wd = lerp(62, 112, clamp(sp, 0, 1.25));
@@ -724,7 +736,7 @@ function buildRoll() {
   const s = { root, cam };
   s.icons = COPY.words.map((w) => {
     const g = svgBox(cam, 300, 300, { left: M - 20, top: 360 });
-    const paths = ICONS[w].map((d) => sv('path', g, { d, fill: 'none', stroke: C.accent, 'stroke-width': 18, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', pathLength: 1, 'stroke-dasharray': 1 }));
+    const paths = ICONS[w].map((d) => sv('path', g, { d, fill: 'none', stroke: C.lite, 'stroke-width': 18, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', pathLength: 1, 'stroke-dasharray': 1 }));
     return { g, paths };
   });
   s.words = COPY.words.map((w) => {
@@ -769,7 +781,7 @@ function drawRoll(t) {
     ic.g.style.transformOrigin = '150px 150px';
     ic.g.style.transform = `scale(${lerp(0.7, 1, pop).toFixed(4)}) rotate(${((1 - pop) * -10).toFixed(2)}deg)`;
   });
-  s.ticks.forEach((k, i) => { k.style.background = i <= cur ? C.accent : C.ink2; k.style.transform = i === cur ? `scaleY(${1 + 0.6 * Math.exp(-(t - ws[cur]) * 12)})` : ''; });
+  s.ticks.forEach((k, i) => { k.style.background = i <= cur ? C.lite : C.ink2; k.style.transform = i === cur ? `scaleY(${1 + 0.6 * Math.exp(-(t - ws[cur]) * 12)})` : ''; });
   const kp = prog(t, ws[0] + 0.1, 0.6);
   const ktxt = 'Da igual a qué te dediques.';
   s.kicker.textContent = ktxt.slice(0, Math.floor(ease.outQuad(kp) * ktxt.length));
@@ -813,7 +825,7 @@ function buildBuild() {
   // 2 hero image
   const hero = part({ left: '40px', top: '200px', width: px(bw - 80), height: '250px', borderRadius: '24px', background: C.ink, overflow: 'hidden', transformOrigin: '50% 0' });
   const hg = svgBox(hero, bw - 80, 250);
-  sv('circle', hg, { cx: bw - 220, cy: 95, r: 50, fill: C.accent });
+  sv('circle', hg, { cx: bw - 220, cy: 95, r: 50, fill: C.lite });
   sv('path', hg, { d: `M0 250 L180 120 L330 220 L470 110 L${bw - 80} 250 Z`, fill: C.ink2 });
   s.parts.push(hero);
   // 3,4 title bars
@@ -862,6 +874,9 @@ function drawBuild(t) {
   tf(s.mark, L.x - 18, L.y - L.size * 0.78);
   s.mark.style.transform += ` scaleX(${mp.toFixed(4)})`;
   vis(s.mark, mp > 0);
+  metal(s.mark, t, 0.3);
+  const mEdge = L.x - 18 + mp * (L.width + 40);
+  L.chars.forEach((c, i) => { c.style.color = L.x + L.pos[i].x + L.pos[i].w * 0.5 < mEdge ? C.paper : C.ink; });
   // browser pops up, parts build on 16ths
   const bp = spring(t - Q.buildParts[0] + 0.12, 2.6, 0.62);
   s.br.style.transform = `translate3d(0,${((1 - Math.min(bp, 1.2)) * 700).toFixed(1)}px,0)`;
@@ -899,13 +914,13 @@ function buildEnd() {
   const f1 = fitWdth('¿Y EL', 330, MW, { wmax: 100 });
   const f2 = fitWdth('TUYO?', 330, MW, { wmax: 100 });
   const size = Math.min(f1.size, f2.size);
-  s.l1 = new Text(s.cam, '¿Y EL', { size, wdth: f1.wdth, y: 640, color: C.ink });
-  s.l2 = new Text(s.cam, 'TUYO?', { size, wdth: f2.wdth, y: 640 + size * 0.9, color: C.ink });
+  s.l1 = new Text(s.cam, '¿Y EL', { size, wdth: f1.wdth, y: 640, color: C.paper });
+  s.l2 = new Text(s.cam, 'TUYO?', { size, wdth: f2.wdth, y: 640 + size * 0.9, color: C.paper });
   s.url = new Pill(s.cam, { icon: 'lock' });
   s.check = svgBox(s.cam, 84, 84);
   sv('circle', s.check, { cx: 42, cy: 42, r: 40, fill: C.ink });
-  s.checkPath = sv('path', s.check, { d: 'M24 43 L37 56 L61 30', fill: 'none', stroke: C.accent, 'stroke-width': 9, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', pathLength: 1, 'stroke-dasharray': 1 });
-  s.cta = el('div', s.cam, 'ui', { position: 'absolute', left: px(M), top: '0', fontSize: '50px', fontWeight: 600, color: C.ink });
+  s.checkPath = sv('path', s.check, { d: 'M24 43 L37 56 L61 30', fill: 'none', stroke: C.lite, 'stroke-width': 9, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', pathLength: 1, 'stroke-dasharray': 1 });
+  s.cta = el('div', s.cam, 'ui', { position: 'absolute', left: px(M), top: '0', fontSize: '50px', fontWeight: 600, color: C.paper });
   S.end = s;
 }
 function drawEnd(t) {
@@ -917,6 +932,7 @@ function drawEnd(t) {
   const r = S.build.btnRect;
   const p = ease.outExpo(prog(t, Q.click, 0.42));
   const x = lerp(r.x, 0, p), y = lerp(r.y, 0, p), w = lerp(r.w, W, p), h = lerp(r.h, H, p);
+  metal(s.fill, t - Q.click, 0.14);
   Object.assign(s.fill.style, { left: px(x), top: px(y), width: px(w), height: px(h), borderRadius: px(lerp(42, 0, p)) });
   // headline
   s.l1.rise(t, Q.endHead[0], { stagger: 0.03 });
