@@ -341,6 +341,21 @@ function buildStudio() {
   s.back = el('img', s.prod, null, { width: px(BACK.w * BACK.k), height: px(BACK.h * BACK.k), transformOrigin: '50% 50%' });
   s.back.src = 'img/back.png';
   s.plate = el('img', s.prod, null, { width: px(W), height: px(H) });
+  // no-plate turn: both photos sliced into strips wrapped on a cylinder, shaded by facing angle
+  const NS_ = 48;
+  s.cyl = el('div', s.prod, 'abs', { width: px(W), height: px(H) });
+  s.strips = [];
+  for (const [side, G, src] of [['f', FRONT, 'img/front.png'], ['b', BACK, 'img/back.png']]) {
+    const iw = G.w * G.k, ih = G.h * G.k, sw = iw / NS_;
+    for (let i = 0; i < NS_; i++) {
+      const d = el('div', s.cyl, 'abs', { width: px(sw + 1), height: px(ih), overflow: 'hidden', transformOrigin: '0 50%' });
+      const im = el('img', d, null, { width: px(iw), height: px(ih), left: px(-i * sw) });
+      im.src = src;
+      const R = iw / 2, cx = G.x + R;
+      const u0 = (i * sw - R) / R, u1 = ((i + 1) * sw - R) / R;
+      s.strips.push({ d, im, side, sw, y: G.y, cx, R, a0: Math.asin(clamp(u0, -1, 1)), a1: Math.asin(clamp(u1, -1, 1)) });
+    }
+  }
   // outline trace around the silhouette
   s.sil = svgBox(s.prod);
   const k = FRONT.k / 4;
@@ -420,15 +435,24 @@ function drawStudio(t) {
     vis(s.plate, true);
     fv = false;
   } else if (inTurn) {
-    // fallback: a card turn
-    const u = ease.inOutCubic((t - ta) / (tb - ta));
-    const th = u * Math.PI;
-    fv = th < Math.PI / 2;
-    bk = !fv;
-    const c = Math.abs(Math.cos(th));
-    tf(fv ? s.front : s.back, fv ? FRONT.x : BACK.x, fv ? FRONT.y : BACK.y, 1);
-    (fv ? s.front : s.back).style.transform += ` scale(${Math.max(0.02, c).toFixed(4)},1)`;
+    // fallback: cylinder turn (front strips at angle asin(u), back strips at pi + asin(u))
+    const u = (t - ta) / (tb - ta);
+    const th = Math.PI * (u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2);
+    fv = bk = false;
+    for (const st of s.strips) {
+      const off = st.side === 'f' ? 0 : Math.PI;
+      const al = st.a0 + off + th, ar = st.a1 + off + th;
+      const xl = st.cx + st.R * Math.sin(al), xr = st.cx + st.R * Math.sin(ar);
+      const facing = Math.cos((al + ar) / 2);
+      const on = facing > 0.02 && xr > xl;
+      vis(st.d, on);
+      if (!on) continue;
+      tf(st.d, xl, st.y);
+      st.d.style.transform += ` scale(${((xr - xl) / st.sw).toFixed(4)},1)`;
+      st.im.style.filter = `brightness(${(1 - 0.75 * Math.pow(1 - facing, 1.4)).toFixed(3)})`;
+    }
   }
+  vis(s.cyl, inTurn && !plate);
   if (!inTurn || plate) {
     tf(s.front, FRONT.x, FRONT.y);
     tf(s.back, BACK.x, BACK.y);
