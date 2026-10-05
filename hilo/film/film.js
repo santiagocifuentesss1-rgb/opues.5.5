@@ -194,12 +194,12 @@ function drawRipple(R, t, t0, x, y, maxR, col) {
 
 // ================================================================================== SCENE 1-2: 03:12
 const NOTIFS = [
-  ['Ana M.', '¿Tienen croissants para mañana?'],
-  ['Carlos R.', '¿Hacen domicilios?'],
+  ['Ana M.', '¿Tienen cita para mañana?'],
+  ['Carlos R.', '¿Cuánto cuesta una limpieza?'],
   ['+57 310 448…', 'Hola, ¿siguen abiertos?'],
-  ['Lucía', 'Necesito una torta para el sábado'],
+  ['Lucía', 'Me duele mucho una muela'],
 ];
-const PILE_MSG = ['¿Precio?', '¿Hola?', '¿Tienen pan sin gluten?', '¿A qué hora abren?', 'Quiero hacer un pedido', '¿Aceptan transferencia?', '¿Hay domicilio a Chapinero?', '¿Me responden?', '¿Todavía hay?', 'Hola!!', '¿Tienen almojábanas?', '¿Cuánto vale la torta?', '¿Hacen pedidos grandes?', '¿Abren el domingo?', '???', 'Buenas noches', '¿Me pueden llamar?', '¿Siguen ahí?', 'Para mañana 6am', '¿Tienen mesa?', 'Hola, info', '¿Cuál es la dirección?'];
+const PILE_MSG = ['¿Precio?', '¿Hola?', '¿Hacen ortodoncia?', '¿A qué hora abren?', 'Quiero agendar una cita', '¿Aceptan transferencia?', '¿Tienen cita para hoy?', '¿Me responden?', '¿Todavía hay cupo?', 'Hola!!', '¿Hacen blanqueamiento?', '¿Cuánto vale una calza?', '¿Atienden urgencias?', '¿Abren el domingo?', '???', 'Buenas noches', '¿Me pueden llamar?', '¿Siguen ahí?', 'Para mañana temprano', '¿Tienen parqueadero?', 'Hola, info', '¿Cuál es la dirección?'];
 const N_PILE = 20;
 let S1;
 function notifCard(parent, who, msg) {
@@ -365,8 +365,8 @@ function buildS3() {
   // chat header
   const hdr = el('div', chat, 'abs', { width: px(W), height: px(150), top: px(BAND), borderBottom: `2px solid ${C.line}` });
   const av = el('div', hdr, 'abs', { left: px(M), top: px(29), width: px(92), height: px(92), borderRadius: '50%', background: C.ink });
-  el('div', av, 'disp', { position: 'absolute', width: '100%', textAlign: 'center', top: px(22), fontSize: px(52), fontVariationSettings: fvs(100), color: C.paper }).textContent = 'L';
-  el('div', hdr, 'ui', { position: 'absolute', left: px(M + 120), top: px(30), fontSize: px(42), fontWeight: 650, color: C.ink, whiteSpace: 'pre' }).textContent = 'Panadería Luna';
+  el('div', av, 'disp', { position: 'absolute', width: '100%', textAlign: 'center', top: px(22), fontSize: px(52), fontVariationSettings: fvs(100), color: C.paper }).textContent = 'S';
+  el('div', hdr, 'ui', { position: 'absolute', left: px(M + 120), top: px(30), fontSize: px(42), fontWeight: 650, color: C.ink, whiteSpace: 'pre' }).textContent = 'Sonríe Odontología';
   const st = el('div', hdr, 'ui', { position: 'absolute', left: px(M + 120), top: px(84), fontSize: px(32), fontWeight: 480, color: C.mute, whiteSpace: 'pre' });
   st.innerHTML = `<span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:${C.accent};margin-right:10px;vertical-align:1px"></span>Agente IA · en línea`;
   // messages
@@ -374,28 +374,28 @@ function buildS3() {
   const list = el('div', area, 'abs', { width: px(W) });
   const items = [];
   const add = (t, side, node, gap = 26) => { items.push({ t, side, node, gap }); return node; };
-  add(Q.c1, 'c', bubble(list, 'c', '¿Tienen croissants para mañana?'));
+  add(Q.c1, 'c', bubble(list, 'c', '¿Tienen cita para mañana?'));
   const dots = add(Q.dots, 'a', el('div', list, 'abs', { width: px(170), height: px(96), borderRadius: '38px 12px 38px 38px', background: C.accent, transformOrigin: '100% 0%' }));
   const dotEls = [0, 1, 2].map((i) => el('div', dots, 'abs', { width: px(20), height: px(20), borderRadius: '50%', background: C.ink, left: px(42 + i * 34), top: px(38) }));
-  const a1 = add(Q.a1, 'a', bubble(list, 'a', '¡Sí! Salen del horno a las 6:00.'));
+  const a1 = add(Q.a1, 'a', bubble(list, 'a', '¡Sí! Tengo espacio en la mañana.'));
   const stamp = add(Q.stamp, 'a', el('div', list, 'ui', { position: 'absolute', fontSize: px(34), fontWeight: 600, color: C.ink, whiteSpace: 'pre', transformOrigin: '100% 0%' }), 12);
   stamp.innerHTML = `<span style="display:inline-block;padding:10px 20px;border-radius:30px;border:2px solid ${C.ink}">respondido en 0,8 s</span>`;
   // product card
   const card = add(Q.card, 'a', el('div', list, 'abs', { width: px(600), borderRadius: px(38), background: C.white, border: `2px solid ${C.line}`, overflow: 'hidden', transformOrigin: '100% 0%' }));
   const ph = el('div', card, null, { width: px(596), height: px(400), background: '#2a2622', position: 'relative', overflow: 'hidden' });
   const img = el('img', ph, null, { width: px(596), height: px(596), position: 'absolute', left: 0, top: px(-110), objectFit: 'cover' });
-  img.src = 'media/croissants.jpg';
+  img.src = 'media/service.jpg';
   img.onerror = () => { img.style.display = 'none'; };
   const cb = el('div', card, null, { padding: '26px 32px 32px', position: 'relative' });
-  el('div', cb, 'ui', { fontSize: px(40), fontWeight: 600, color: C.ink, whiteSpace: 'pre' }).textContent = 'Caja x6 croissants';
-  el('div', cb, 'disp', { fontSize: px(76), fontVariationSettings: fvs(90), color: C.ink, marginTop: px(12) }).textContent = '$18.000';
+  el('div', cb, 'ui', { fontSize: px(40), fontWeight: 600, color: C.ink, whiteSpace: 'pre' }).textContent = 'Limpieza dental';
+  el('div', cb, 'disp', { fontSize: px(76), fontVariationSettings: fvs(90), color: C.ink, marginTop: px(12) }).textContent = '$120.000';
   const btn = el('div', cb, null, { marginTop: px(24), height: px(96), borderRadius: px(48), background: C.ink, position: 'relative', transformOrigin: '50% 50%' });
   const btnTxt = el('div', btn, 'ui', { position: 'absolute', width: '100%', textAlign: 'center', top: px(26), fontSize: px(40), fontWeight: 600, color: C.paper, whiteSpace: 'pre' });
-  const c2 = add(Q.c2, 'c', bubble(list, 'c', '¡Me la llevo!'));
+  const c2 = add(Q.c2, 'c', bubble(list, 'c', '¡Perfecto, esa!'));
   // payment card
   const pay = add(Q.pay, 'a', el('div', list, 'abs', { width: px(600), borderRadius: px(38), background: C.white, border: `2px solid ${C.line}`, padding: '28px 32px 30px', transformOrigin: '100% 0%' }));
-  el('div', pay, 'ui', { fontSize: px(32), fontWeight: 500, color: C.mute, whiteSpace: 'pre' }).textContent = 'Link de pago';
-  el('div', pay, 'disp', { fontSize: px(84), fontVariationSettings: fvs(90), color: C.ink, marginTop: px(10) }).textContent = '$18.000';
+  el('div', pay, 'ui', { fontSize: px(32), fontWeight: 500, color: C.mute, whiteSpace: 'pre' }).textContent = 'Abono de la cita';
+  el('div', pay, 'disp', { fontSize: px(84), fontVariationSettings: fvs(90), color: C.ink, marginTop: px(10) }).textContent = '$40.000';
   const barBg = el('div', pay, null, { marginTop: px(20), height: px(12), borderRadius: px(6), background: '#e6e2d8', position: 'relative', overflow: 'hidden' });
   const bar = el('div', barBg, 'abs', { height: '100%', width: '100%', background: C.accent, transformOrigin: '0 0' });
   const payRow = el('div', pay, null, { marginTop: px(22), height: px(56), position: 'relative' });
@@ -403,15 +403,17 @@ function buildS3() {
   const payTxt = el('div', payRow, 'ui', { position: 'absolute', left: px(74), top: px(8), fontSize: px(38), fontWeight: 650, color: C.ink, whiteSpace: 'pre' });
   // slots
   const slots = add(Q.slots, 'a', el('div', list, 'abs', { width: px(640), transformOrigin: '100% 0%' }));
-  const sq = bubble(slots, 'a', '¿A qué hora pasas?');
+  const sq = bubble(slots, 'a', '¿Qué hora te sirve?');
   sq.style.right = '0';
-  const chips = ['6:30', '7:00', '7:30'].map((s, i) => {
-    const c = el('div', slots, 'abs', { width: px(196), height: px(92), borderRadius: px(46), border: `3px solid ${C.ink}`, background: C.white, top: px(126), left: px(640 - 3 * 196 - 2 * 14 + i * 210), transformOrigin: '50% 50%' });
+  sq.style.whiteSpace = 'pre';
+  const chipTop = sq.offsetHeight + 18;
+  const chips = ['8:00', '9:30', '11:00'].map((s, i) => {
+    const c = el('div', slots, 'abs', { width: px(196), height: px(92), borderRadius: px(46), border: `3px solid ${C.ink}`, background: C.white, top: px(chipTop), left: px(640 - 3 * 196 - 2 * 14 + i * 210), transformOrigin: '50% 50%' });
     const tx = el('div', c, 'ui', { position: 'absolute', width: '100%', textAlign: 'center', top: px(22), fontSize: px(40), fontWeight: 650, color: C.ink });
     tx.textContent = s;
     return { c, tx };
   });
-  slots.style.height = px(126 + 92);
+  slots.style.height = px(chipTop + 92);
   // voice note
   const voice = add(Q.voice, 'c', el('div', list, 'abs', { width: px(640), height: px(124), borderRadius: '12px 38px 38px 38px', background: C.white, border: `2px solid ${C.line}`, transformOrigin: '0% 0%' }));
   const play = el('div', voice, 'abs', { left: px(26), top: px(22), width: px(76), height: px(76), borderRadius: '50%', background: C.ink });
@@ -426,7 +428,7 @@ function buildS3() {
   }
   el('div', voice, 'ui', { position: 'absolute', right: px(30), top: px(42), fontSize: px(30), fontWeight: 500, color: C.mute }).textContent = '0:04';
   const vt = add(Q.voiceTxt, 'c', el('div', list, 'ui', { position: 'absolute', fontSize: px(42), fontWeight: 500, color: C.mute, whiteSpace: 'pre', transformOrigin: '0% 0%' }), 12);
-  vt.textContent = '“¿Y tienen sin gluten?”';
+  vt.textContent = '“¿Y la limpieza duele?”';
   const rip = ripple(list);
 
   // layout (static): measure each item once
@@ -581,7 +583,7 @@ async function drawS3(t) {
   S3.dotEls.forEach((d, i) => tf(d, 0, -12 * Math.max(0, Math.sin((t - Q.dots) * 14 - i * 0.9))));
   // product card button: tap on VENDE
   const tapped = t >= Q.tap;
-  S3.btnTxt.textContent = tapped ? 'Apartado  ✓' : 'Apartar';
+  S3.btnTxt.textContent = tapped ? 'Reservado  ✓' : 'Reservar';
   S3.btn.style.background = tapped ? C.accent : C.ink;
   S3.btnTxt.style.color = tapped ? C.ink : C.paper;
   const press = t >= Q.tap - 0.06 && t < Q.tap + 0.08 ? 0.93 : 1;
@@ -640,19 +642,19 @@ async function drawS3(t) {
 
 // ================================================================================== SCENE 5: night shop
 let S5;
-const ORDERS = [['03:14', 'Pedido #041', '$18.000'], ['03:52', 'Pedido #042', '$42.000'], ['04:37', 'Pedido #043', '$9.500'], ['05:20', 'Pedido #044', '$27.000']];
+const ORDERS = [['03:14', 'Limpieza dental', 'mar 9:30 · abono pagado'], ['03:52', 'Valoración', 'mar 11:00 · confirmada'], ['04:37', 'Blanqueamiento', 'mié 8:00 · abono pagado'], ['05:20', 'Ortodoncia', 'mié 4:30 p.m. · confirmada']];
 function buildS5() {
   const root = el('div', stage, 'layer');
   const scrim = el('div', root, 'layer', { background: 'linear-gradient(180deg, rgba(5,7,6,.72) 0%, rgba(5,7,6,0) 42%, rgba(5,7,6,0) 52%, rgba(5,7,6,.7) 100%)' });
   void scrim;
   const l1 = mkLine(root, 'MIENTRAS', { size: 200, wdth: 125, y: 150 });
-  const l2 = mkLine(root, 'TU NEGOCIO', { size: 200, wdth: 125, y: 150 + 212 });
+  const l2 = mkLine(root, 'TU CLÍNICA', { size: 200, wdth: 125, y: 150 + 212 });
   const l3 = mkLine(root, 'DUERME,', { size: 200, wdth: 125, y: 150 + 424, color: C.accent });
   const rows = ORDERS.map(([tm, id, amt]) => {
     const r = el('div', root, 'abs', { width: px(MW), height: px(132), borderRadius: px(34), background: C.paper });
     el('div', r, 'disp', { position: 'absolute', left: px(34), top: px(40), fontSize: px(56), fontVariationSettings: fvs(80), color: C.ink }).textContent = tm;
     el('div', r, 'ui', { position: 'absolute', left: px(230), top: px(26), fontSize: px(38), fontWeight: 650, color: C.ink, whiteSpace: 'pre' }).textContent = id;
-    el('div', r, 'ui', { position: 'absolute', left: px(230), top: px(72), fontSize: px(36), fontWeight: 500, color: C.mute, whiteSpace: 'pre' }).textContent = `${amt} · pagado`;
+    el('div', r, 'ui', { position: 'absolute', left: px(230), top: px(72), fontSize: px(36), fontWeight: 500, color: C.mute, whiteSpace: 'pre' }).textContent = amt;
     const ck = checkSvg(r, 76, C.ink, C.accent);
     tf(ck.g, MW - 34 - 76, 28);
     return { r, ck };
@@ -679,14 +681,14 @@ async function drawS5(t) {
   return true;
 }
 
-// ================================================================================== SCENE 6: morning, 37 orders
+// ================================================================================== SCENE 6: morning, 23 new appointments
 let S6;
 function buildS6() {
   const root = el('div', stage, 'layer');
   el('div', root, 'layer', { background: 'linear-gradient(180deg, rgba(10,8,5,0) 45%, rgba(10,8,5,.78) 78%, rgba(10,8,5,.85) 100%)' });
   const l1 = mkLine(root, 'Y TÚ ABRES CON', { size: 116, wdth: 125, y: 1060 });
   const num = el('div', root, 'disp', { position: 'absolute', left: px(M - 14), top: px(1150), fontSize: px(520), fontVariationSettings: fvs(72), color: C.paper, lineHeight: '1', transformOrigin: '0% 80%', whiteSpace: 'pre' });
-  const l3 = mkLine(root, 'PEDIDOS.', { size: 168, wdth: 125, y: 1590, x: M + 0, maxW: MW, fit: true });
+  const l3 = mkLine(root, 'CITAS NUEVAS.', { size: 168, wdth: 125, y: 1590, x: M + 0, maxW: MW, fit: true });
   const us = svgBox(root);
   const under = sv('path', us, { d: `M ${M} 1795 C 300 1782, 700 1806, ${W - M} 1788`, fill: 'none', stroke: C.accent, 'stroke-width': 18, 'stroke-linecap': 'round' });
   S6 = { root, l1, num, l3, under, ulen: 0 };
@@ -700,9 +702,9 @@ async function drawS6(t) {
   const shx = noise1(t * 40, 21) * 14 * hit, shy = noise1(t * 40, 22) * 14 * hit;
   await drawPlate('owner', tl, { speed: 1, start: 0.35, s: 1.04 + tl * 0.025 + hit * 0.03, x: shx, y: shy, filter: 'contrast(1.06) saturate(1.05)' });
   rise(S6.l1, t, Q.open1);
-  // count to 37 on 16ths, slam on the beat
+  // count to 23 on 16ths, slam on the beat
   const q = Math.floor(prog(t, Q.count[0], Q.count[1] - Q.count[0]) * 8) / 8;
-  const n = t >= Q.countHit ? 37 : Math.round(37 * ease.outCubic(q));
+  const n = t >= Q.countHit ? 23 : Math.round(23 * ease.outCubic(q));
   S6.num.textContent = String(n);
   const nin = ease.outExpo(prog(t, Q.count[0], 0.3));
   vis(S6.num, t >= Q.count[0]);

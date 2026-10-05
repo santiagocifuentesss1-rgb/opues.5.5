@@ -7,4 +7,4 @@ for n in night shop owner; do
   ffmpeg -v error -i assets/footage/$n.mp4 -q:v 2 film/media/$n/f%04d.jpg
   echo "{\"count\": $(ls film/media/$n/*.jpg | wc -l)}" > film/media/$n/index.json
 done
-cp assets/croissants.jpg film/media/croissants.jpg
+cp assets/service.jpg film/media/service.jpg
