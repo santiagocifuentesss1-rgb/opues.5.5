@@ -9,3 +9,14 @@ nebula/out/segments-*/
 nebula/out/stills/
 nebula/out/check.png
 nebula/audio/build/
+hilo/node_modules
+hilo/film/media/night/
+hilo/film/media/shop/
+hilo/film/media/owner/
+hilo/out/segments/
+hilo/out/stills/
+hilo/out/*.log
+hilo/out/crop.png
+hilo/out/check.png
+hilo/out/wave.png
+hilo/audio/build/
