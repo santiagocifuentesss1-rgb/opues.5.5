@@ -1,0 +1,16 @@
+{
+  "name": "todo-negocio-necesita-una-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "15s kinetic motion piece (ES): por qué todo negocio necesita una web. Rendered as a pure function of time.",
+  "scripts": {
+    "audio": "node audio/build.mjs",
+    "contact": "node render.mjs --contact",
+    "render": "node render.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.56.1",
+    "sharp": "^0.34.4"
+  }
+}
