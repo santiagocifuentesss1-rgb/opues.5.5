@@ -5,20 +5,24 @@
 import sharp from 'sharp';
 import fs from 'node:fs';
 
-export async function traceCrest(src, { maxH = 1400, tol = 0.9 } = {}) {
-  let img = sharp(src).removeAlpha();
+// mode: 'green' (crest ink), 'alpha' (cutout silhouette), 'white' (print on the shirt, inside `box`)
+export async function traceCrest(src, { maxH = 1400, tol = 0.9, mode = 'green', box = null, minArea = 30 } = {}) {
+  let img = sharp(src).ensureAlpha();
   const meta = await img.metadata();
   if (meta.height > maxH) img = img.resize({ height: maxH, kernel: 'lanczos3' });
   const { data, info } = await img.raw().toBuffer({ resolveWithObject: true });
-  const w = info.width, h = info.height;
+  const w = info.width, h = info.height, ch = info.channels;
   // greenness in [0,1]: white -> 0, brand green -> 1 (soft, so the contour lands between pixels)
   const f = new Float32Array((w + 2) * (h + 2)); // 1 px empty border so every loop closes
   const W2 = w + 2;
   for (let y = 0; y < h; y++)
     for (let x = 0; x < w; x++) {
-      const i = (y * w + x) * 3;
-      const r = data[i], g = data[i + 1], b = data[i + 2];
-      const v = Math.min(1, Math.max(0, ((g - r) - 20) / (130 - 20))) * Math.min(1, Math.max(0, (255 - r) / 120));
+      const i = (y * w + x) * ch;
+      const r = data[i], g = data[i + 1], b = data[i + 2], a = data[i + 3];
+      let v;
+      if (mode === 'alpha') v = a / 255;
+      else if (mode === 'white') v = box && (x < box[0] || y < box[1] || x > box[2] || y > box[3]) ? 0 : Math.min(1, Math.max(0, (Math.min(r, g, b) - 90) / (200 - 90))) * (a / 255);
+      else v = Math.min(1, Math.max(0, ((g - r) - 20) / (130 - 20))) * Math.min(1, Math.max(0, (255 - r) / 120));
       f[(y + 1) * W2 + x + 1] = v;
     }
   // connected components of the binary mask (8-connectivity)
@@ -44,7 +48,7 @@ export async function traceCrest(src, { maxH = 1400, tol = 0.9 } = {}) {
   }
   const out = [];
   for (const c of comps) {
-    if (c.n < 30) continue; // specks
+    if (c.n < minArea) continue; // specks
     // field restricted to this component (dilated by one px so the AA ramp is kept)
     const g = (x, y) => {
       if (x < 0 || y < 0 || x >= W2 || y >= h + 2) return 0;
@@ -131,7 +135,8 @@ function dp(pts, tol) {
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const r = await traceCrest(process.argv[2]);
+  const opts = process.argv[4] ? JSON.parse(process.argv[4]) : {};
+  const r = await traceCrest(process.argv[2], opts);
   fs.writeFileSync(process.argv[3], JSON.stringify(r));
   console.log(`${r.parts.length} parts, ${r.width}x${r.height}`, r.parts.map((p) => `${p.bbox.join(',')} n=${p.area} len=${p.d.length}`).join('\n'));
 }

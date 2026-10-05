@@ -4,7 +4,7 @@
 // Usage: node tools/cutout.mjs <in.png> <out.png>
 import sharp from 'sharp';
 
-export async function cutout(src, dst, { pad = 6 } = {}) {
+export async function cutout(src, dst, { pad = 6, box = null } = {}) {
   const { data, info } = await sharp(src).removeAlpha().raw().toBuffer({ resolveWithObject: true });
   const { width: w, height: h } = info;
   const L = (i) => 0.299 * data[i * 3] + 0.587 * data[i * 3 + 1] + 0.114 * data[i * 3 + 2];
@@ -54,8 +54,9 @@ export async function cutout(src, dst, { pad = 6 } = {}) {
       x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y);
     }
   }
-  const left = Math.max(0, x0 - pad), top = Math.max(0, y0 - pad);
-  const cw = Math.min(w, x1 + pad + 1) - left, ch = Math.min(h, y1 + pad + 1) - top;
+  // `box` = fixed crop [left, top, width, height] (keeps an HD cutout registered to the SD one)
+  const left = box ? box[0] : Math.max(0, x0 - pad), top = box ? box[1] : Math.max(0, y0 - pad);
+  const cw = box ? box[2] : Math.min(w, x1 + pad + 1) - left, ch = box ? box[3] : Math.min(h, y1 + pad + 1) - top;
   await sharp(out, { raw: { width: w, height: h, channels: 4 } }).extract({ left, top, width: cw, height: ch }).png().toFile(dst);
   return { left, top, width: cw, height: ch };
 }
