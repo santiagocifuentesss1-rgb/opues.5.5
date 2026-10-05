@@ -4,3 +4,8 @@ out/segments/
 out/stills/
 audio/build/
 *.log
+nebula/node_modules
+nebula/out/segments-*/
+nebula/out/stills/
+nebula/out/check.png
+nebula/audio/build/
