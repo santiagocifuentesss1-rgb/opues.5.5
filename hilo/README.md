@@ -17,7 +17,7 @@ code-driven motion graphics, score and sound design.
 | 4 | 1 AGENTE. 1.284 CONVERSACIONES A LA VEZ. | the chat becomes one tile of hundreds (exponential zoom-out + roll), tiles answer in a radial wave; mosaic implodes into the thread |
 | 5 | MIENTRAS TU NEGOCIO DUERME, | footage: the closed bakery in the rain; paid orders slide in at 03:14, 03:52, 04:37, 05:20 |
 | 6 | Y TÚ ABRES CON 37 PEDIDOS. | footage: the owner at sunrise breaks into a smile at camera on the count's slam; the thread underlines |
-| 7 | hilo · Agentes de IA para WhatsApp · Pruébalo gratis → | the thread draws a speech bubble, typing dots become the wordmark, CTA tapped on the beat |
+| 7 | nebula · Agentes de IA para WhatsApp · Pruébalo gratis → | the thread draws a speech bubble, typing dots become the "nebula" wordmark (fitted on the width axis), CTA tapped on the beat |
 
 ## Higgsfield footage
 
@@ -48,4 +48,4 @@ node render.mjs --skip-audio       # full render (motion blur: 4 / 8 / 20 sub-fr
 
 Display face Archivo (variable width axis animated on slams), UI face Geist. One accent: WhatsApp-adjacent green `#25D366`
 on ink `#0A0D0B` and paper `#EEEBE3`. No gradients as backgrounds (only footage scrims), no fades, corner labels, frame
-borders, glow or particle bursts. Generic chat glyph, not the WhatsApp logo. "Hilo" and "Panadería Luna" are fictional.
+borders, glow or particle bursts. Generic chat glyph, not the WhatsApp logo. End wordmark: "nebula"; "Panadería Luna" is fictional.

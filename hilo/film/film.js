@@ -731,8 +731,12 @@ function buildS7() {
   const bub = sv('path', g, { d, fill: 'none', stroke: C.accent, 'stroke-width': 22, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' });
   const lead = sv('path', g, { d: `M -60 1788 C 300 1780, 700 1500, ${x0 + r} ${y0 + h}`, fill: 'none', stroke: C.accent, 'stroke-width': 22, 'stroke-linecap': 'round' });
   const dots = [0, 1, 2].map((i) => sv('circle', g, { cx: 540 - 70 + i * 70, cy: y0 + h / 2, r: 22, fill: C.paper }));
-  const wm = el('div', root, 'disp', { position: 'absolute', left: 0, top: px(y0 + 70), width: px(W), textAlign: 'center', fontSize: px(290), color: C.paper, letterSpacing: '-0.02em', whiteSpace: 'pre', lineHeight: '1' });
-  wm.textContent = 'hilo';
+  // wordmark fitted inside the bubble on the width axis (size drops only if the axis bottoms out)
+  const WORD = 'nebula';
+  const wf = fitWdth(WORD, 290, w - 170, { wmin: 62, wmax: 100, ls: -0.02 });
+  const wm = el('div', root, 'disp', { position: 'absolute', left: 0, top: px(y0 + h / 2 + 15 - wf.size / 2), width: px(W), textAlign: 'center', fontSize: px(wf.size), color: C.paper, letterSpacing: '-0.02em', whiteSpace: 'pre', lineHeight: '1' });
+  wm.textContent = WORD;
+  wm.dataset.wdth = wf.wdth;
   const tag = el('div', root, 'ui', { position: 'absolute', left: 0, width: px(W), textAlign: 'center', top: px(1090), fontSize: px(60), fontWeight: 560, color: C.paper, whiteSpace: 'pre', overflow: 'hidden', height: px(80) });
   const tagIn = el('div', tag, null, { position: 'relative' });
   tagIn.textContent = 'Agentes de IA para WhatsApp';
@@ -765,7 +769,8 @@ async function drawS7(t) {
   });
   const ws = sp(t, Q.wordmark, 4.2, 0.42);
   vis(S7.wm, t >= Q.wordmark);
-  S7.wm.style.fontVariationSettings = fvs(lerp(125, 96, ws));
+  const wd = +S7.wm.dataset.wdth;
+  S7.wm.style.fontVariationSettings = fvs(lerp(Math.min(125, wd + 22), wd, ws));
   tf(S7.wm, 0, 0, lerp(0.55, 1, ws));
   const bubPulse = 1 + 0.035 * decay(t - Q.wordmark, 9) * Math.sin((t - Q.wordmark) * 30);
   S7.bub.parentNode.style.transformOrigin = '540px 730px';
